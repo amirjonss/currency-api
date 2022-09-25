@@ -1,6 +1,8 @@
 import {Promise} from 'mongoose';
-import axios from 'axios';
 import insertLatestCurrencyManager from '../models/InsertCurrencyManager';
+require('dotenv').config();
+
+const axios = require('axios');
 
 interface ResponseInterface {
   data: {
@@ -12,26 +14,25 @@ interface ResponseInterface {
   };
 }
 
-export default async function insertLatestCurrency(symbol: string) {
+export default async function insertLatestCurrency(symbol: string, date: Date) {
+  let strDate = date.toISOString().slice(0, 10);
   return new Promise((resolve: () => void, reject: () => void) => {
-    let rates = {};
     axios({
-      method: 'get',
-      url: `https://api.apilayer.com/fixer/latest?symbols=&base=${symbol}`,
+      method: 'GET',
+      url: `https://api.apilayer.com/fixer/${strDate}?symbols=&base=${symbol}`,
       headers: {
-        'apikey': 'jf8kXLjO6E0Si6uzTZ0zCCkkzA5JPKDv',
+        apikey: process.env.FIXER_API_KEY,
       },
     })
       .then((response: ResponseInterface) => {
-        rates = response.data;
         if (response.data.success) {
-          insertLatestCurrencyManager(response.data)
+          insertLatestCurrencyManager(response.data);
         }
         resolve()
       })
       .catch((err: {message: string;}) => {
         console.log(err.message);
-        reject()
+        reject();
       });
-  })
+  });
 }
