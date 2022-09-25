@@ -1,6 +1,5 @@
 import {Promise} from 'mongoose';
 import insertLatestCurrencyManager from '../models/InsertCurrencyManager';
-require('dotenv').config();
 
 const axios = require('axios');
 
@@ -21,7 +20,7 @@ export default async function insertLatestCurrency(symbol: string, date: Date) {
       method: 'GET',
       url: `https://api.apilayer.com/fixer/${strDate}?symbols=&base=${symbol}`,
       headers: {
-        apikey: process.env.FIXER_API_KEY,
+        apikey: 'wNzvMdh5m0PDf1z7Yy4kIVU3GVttG1T8',
       },
     })
       .then((response: ResponseInterface) => {
